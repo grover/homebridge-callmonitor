@@ -26,7 +26,6 @@ class CallMonitorAccessory {
     this._port = config.port;
 
     this._activeConnections = [];
-    this._inCall = Characteristic.ContactSensorState.CONTACT_NOT_DETECTED;
     this._active = false;
     this._hasFault = false;
 
