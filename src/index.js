@@ -32,10 +32,19 @@ const FritzPlatform = class {
     let _accessories = [];
     const { devices } = this.config;
 
-    devices.forEach(bot => {
+    devices.forEach(device => {
       this.log(`Found device in config: "${devices.name}"`);
 
-      const callMonitor = new CallMonitorAccessory(this.api.hap, this.log, bot);
+      if (!device.address || !device.name) {
+        this.log('Skipping device because it doesn\'t have an address.');
+        return;
+      }
+
+      device.port = device.port || 1012;
+      device.incomingName = device.incomingName || device.name + " - Incoming";
+      device.outgoingName = device.outgoingName || device.name + " - Outgoing";
+
+      const callMonitor = new CallMonitorAccessory(this.api.hap, this.log, device);
       _accessories.push(callMonitor);
     });
 

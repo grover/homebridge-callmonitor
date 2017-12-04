@@ -2,6 +2,8 @@
 
 const inherits = require('util').inherits;
 const Socket = require('net').Socket;
+const byline = require('byline');
+const createStream = byline.createStream;
 
 var Accessory, Characteristic, Service;
 
@@ -15,6 +17,8 @@ class CallMonitorAccessory {
 
     this.log = log;
     this.name = config.name;
+    this.outgoingName = config.outgoingName;
+    this.incomingName = config.incomingName;
     this.version = config.version;
     this.category = Accessory.Categories.SENSOR;
 
@@ -29,7 +33,43 @@ class CallMonitorAccessory {
     this._socket = null;
     this._connect();
 
+
+    this.createIncomingCallSensorServices();
+    this.createOutgoingCallSensorService();
+
     this._services = this.createServices();
+
+    this._reportCallStatus();
+  }
+
+  createIncomingCallSensorServices() {
+    this._incomingCallSensor = new Service.ContactSensor(this.name, "Incoming");
+    this._incomingCallSensor.getCharacteristic(Characteristic.ContactSensorState)
+      .on('get', this._getIncomingCall.bind(this));
+
+    this._incomingCallSensor.getCharacteristic(Characteristic.StatusActive)
+      .on('get', this._getActive.bind(this));
+
+    this._incomingCallSensor.getCharacteristic(Characteristic.StatusFault)
+      .on('get', this._getFault.bind(this));
+
+    this._incomingCallSensor.getCharacteristic(Characteristic.Name)
+      .setValue(this.incomingName);
+  }
+
+  createOutgoingCallSensorService() {
+    this._outgoingCallSensor = new Service.ContactSensor(this.name, "Outgoing");
+    this._outgoingCallSensor.getCharacteristic(Characteristic.ContactSensorState)
+      .on('get', this._getOutgoingCall.bind(this));
+
+    this._outgoingCallSensor.getCharacteristic(Characteristic.StatusActive)
+      .on('get', this._getActive.bind(this));
+
+    this._outgoingCallSensor.getCharacteristic(Characteristic.StatusFault)
+      .on('get', this._getFault.bind(this));
+
+    this._outgoingCallSensor.getCharacteristic(Characteristic.Name)
+      .setValue(this.outgoingName);
   }
 
   getServices() {
@@ -39,7 +79,8 @@ class CallMonitorAccessory {
   createServices() {
     return [
       this.getAccessoryInformationService(),
-      this.getContactSensorService()
+      this._incomingCallSensor,
+      this._outgoingCallSensor,
     ];
   }
 
@@ -53,34 +94,45 @@ class CallMonitorAccessory {
       .setCharacteristic(Characteristic.HardwareRevision, this.version);
   }
 
-  getContactSensorService() {
-    const sensor = new Service.ContactSensor(this.name);
-    sensor.getCharacteristic(Characteristic.ContactSensorState)
-      .on('get', this._getInCall.bind(this));
-
-    sensor.getCharacteristic(Characteristic.StatusActive)
-      .on('get', this._getActive.bind(this));
-
-    sensor.getCharacteristic(Characteristic.StatusFault)
-      .on('get', this._getFault.bind(this));
-
-    return sensor;
-  }
   identify(callback) {
     this.log(`Identify requested on ${this.name}`);
     callback();
   }
 
-  _getInCall(callback) {
-    this.log("Returning current in call status: s=" + this._inCall);
-    callback(undefined, this._inCall);
+  hasIncomingCall() {
+    return this._activeConnections.some(call => call.direction === 'RING') ?
+      Characteristic.ContactSensorState.CONTACT_DETECTED : Characteristic.ContactSensorState.CONTACT_NOT_DETECTED;
   }
 
-  _setInCall(value) {
-    this._inCall = value ? Characteristic.ContactSensorState.CONTACT_DETECTED : Characteristic.ContactSensorState.CONTACT_NOT_DETECTED;
+  hasOutgoingCall() {
+    return this._activeConnections.some(call => call.direction === 'CALL') ?
+      Characteristic.ContactSensorState.CONTACT_DETECTED : Characteristic.ContactSensorState.CONTACT_NOT_DETECTED;
+  }
 
-    this._services[1].getCharacteristic(Characteristic.StatusActive)
-      .updateValue(this._inCall, undefined, undefined);
+  _getIncomingCall(callback) {
+    const inCall = this.hasIncomingCall();
+    this.log("Returning current incoming call status: s=" + inCall);
+    callback(undefined, inCall);
+  }
+
+  _getOutgoingCall(callback) {
+    const outCall = this.hasOutgoingCall();
+    this.log("Returning current outgoing call status: s=" + outCall);
+    callback(undefined, outCall);
+  }
+
+  _reportCallStatus() {
+
+    const incomingCall = this.hasIncomingCall();
+    const outgoingCall = this.hasOutgoingCall();
+
+    this._setCallSensorStatus(this._incomingCallSensor, incomingCall);
+    this._setCallSensorStatus(this._outgoingCallSensor, outgoingCall);
+  }
+
+  _setCallSensorStatus(sensor, status) {
+    sensor.getCharacteristic(Characteristic.ContactSensorState)
+      .updateValue(status, undefined, undefined);
   }
 
   _getActive(callback) {
@@ -91,7 +143,9 @@ class CallMonitorAccessory {
   _setActive(value) {
     this._active = value;
 
-    this._services[1].getCharacteristic(Characteristic.StatusActive)
+    this._incomingCallSensor.getCharacteristic(Characteristic.StatusActive)
+      .updateValue(this._active, undefined, undefined);
+    this._outgoingCallSensor.getCharacteristic(Characteristic.StatusActive)
       .updateValue(this._active, undefined, undefined);
   }
 
@@ -103,7 +157,9 @@ class CallMonitorAccessory {
   _setFault(value) {
     this._hasFault = value;
 
-    this._services[1].getCharacteristic(Characteristic.StatusFault)
+    this._incomingCallSensor.getCharacteristic(Characteristic.StatusFault)
+      .updateValue(this._hasFault, undefined, undefined);
+    this._outgoingCallSensor.getCharacteristic(Characteristic.StatusFault)
       .updateValue(this._hasFault, undefined, undefined);
   }
 
@@ -127,12 +183,17 @@ class CallMonitorAccessory {
     this._socket.on("close", had_error => {
       this._setActive(false);
       this._setFault(had_error);
+
+      // Initiate reconnects
+      console.error("Socket connection to Fritz!Box device was closed. Reconnecting in 5s.");
+      setTimeout(this._connect.bind(this), 5000);
     });
 
     this._socket.connect(this._port, this._host);
   }
 
   _onLineReceived(line) {
+    console.info(line);
     const data = line.split(';');
 
     //
@@ -142,13 +203,16 @@ class CallMonitorAccessory {
     // RING -> CONNECT -> DISCONNECT
     //
     if (data[1] === 'CALL' || data[1] === 'RING') {
-      this._activeConnections.push(data[2]);
+      this._activeConnections.push({
+        id: data[2],
+        direction: data[1],
+      });
     }
-    else if (data[1] == 'DISCONNECT') {
-      this._activeConnections = this._activeConnections.filter(item => item !== data[2]);
+    else if (data[1] === 'DISCONNECT') {
+      this._activeConnections = this._activeConnections.filter(item => item.id !== data[2]);
     }
 
-    this._setInCall(this._activeConnections.length > 0);
+    this._reportCallStatus();
   }
 }
 
