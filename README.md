@@ -78,7 +78,7 @@ This platform and the bots it drives have been verified to work with the followi
 * Elgato Eve
 * Home
 
-## Supported AVM Fritz devices
+## Supported devices
 
 * AVM Fritz!Box 7490
 
@@ -87,9 +87,7 @@ it via a [GitHub](https://github.com/grover/homebridge-callmonitor/issues) issue
 
 ### Configuration
 
-You need to enable the call monitor on the Fritz devices. This can be done by dialing `#96*5*` on a phone connected directly to the Fritz!Box.
-
-To disable the call monitor dial `#96*4*`.
+You need to enable the call monitor on most devices. For AVM Fritz!Box devices this can be done by dialing `#96*5*` on a connected phone. To disable the call monitor dial `#96*4*`.
 
 ## Some asks for friendly gestures
 
