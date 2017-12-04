@@ -99,13 +99,16 @@ class CallMonitorAccessory {
   }
 
   hasIncomingCall() {
-    return this._activeConnections.some(call => call.direction === 'RING') ?
-      Characteristic.ContactSensorState.CONTACT_DETECTED : Characteristic.ContactSensorState.CONTACT_NOT_DETECTED;
+    return this.hasCall('RING');
   }
 
   hasOutgoingCall() {
-    return this._activeConnections.some(call => call.direction === 'CALL') ?
-      Characteristic.ContactSensorState.CONTACT_DETECTED : Characteristic.ContactSensorState.CONTACT_NOT_DETECTED;
+    return this.hasCall('CALL');
+  }
+
+  hasCall(condition) {
+    return this._activeConnections.some(call => call.direction === condition) ?
+      Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED;
   }
 
   _getIncomingCall(callback) {
