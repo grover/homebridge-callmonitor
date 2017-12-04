@@ -187,7 +187,7 @@ class CallMonitorAccessory {
       this._setFault(had_error);
 
       // Initiate reconnects
-      this.log(`Socket connection to "${this.name}"  was closed. Reconnecting in 5s.`);
+      this.log(`Socket connection to "${this.name}"  was closed/rejected. Reconnecting in 5s.`);
       setTimeout(this._connect.bind(this), 5000);
     });
 
