@@ -1,7 +1,7 @@
 {
   "name": "homebridge-callmonitor",
-  "version": "0.0.1",
-  "description": "Signals incoming and outgoing calls via HomeKit",
+  "version": "0.0.2",
+  "description": "Signals incoming and outgoing calls using the call monitor facility in Fritz!Box devices via HomeKit",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,7 +10,7 @@
     "homebridge",
     "homebridge-plugin",
     "fritz",
-    "fritzbox",
+    "fritz!box",
     "callmonitor",
     "homekit",
     "home-automation"

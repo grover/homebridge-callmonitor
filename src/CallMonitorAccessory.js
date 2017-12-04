@@ -88,7 +88,7 @@ class CallMonitorAccessory {
     return new Service.AccessoryInformation()
       .setCharacteristic(Characteristic.Name, this.name)
       .setCharacteristic(Characteristic.Manufacturer, 'Michael Froehlich')
-      .setCharacteristic(Characteristic.Model, 'Fritz Call Monitor')
+      .setCharacteristic(Characteristic.Model, 'Call Monitor')
       .setCharacteristic(Characteristic.SerialNumber, '42')
       .setCharacteristic(Characteristic.FirmwareRevision, this.version)
       .setCharacteristic(Characteristic.HardwareRevision, this.version);

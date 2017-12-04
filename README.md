@@ -1,6 +1,6 @@
-# Homebridge Plugin to monitor calls via AVM Fritz!Box
+# Homebridge Plugin to monitor calls
 
-Accessories created by this platform provide a contact sensor, which is opened for every 
+Accessories created by this platform provide a contact sensor, which is opened for every
 incoming or outgoing call. A use for this could be to automatically turn down the volume
 of played back music to be able to recognize the ringing phone.
 
@@ -25,9 +25,9 @@ After [Homebridge](https://github.com/nfarina/homebridge) has been installed:
 
  ```sudo npm install -g homebridge-callmonitor```
 
-## Example config.json:
+## Example config.json
 
- ```
+```json
 {
   "bridge": {
       ...
@@ -49,8 +49,7 @@ After [Homebridge](https://github.com/nfarina/homebridge) has been installed:
 }
 ```
 
-The platform can connect to any number of AVM Fritz!Box devices. I've tested it
-with a 7490, other models may work as well. If you want to report a different 
+The platform can connect to any number of devices, which support the call monitor protocol supported by AVM Fritz!Box devices. I've tested it with an AVM Fritz!Box 7490, other models may work as well. If you want to report a different
 device as working, please file an issue.
 
 A device is configured by specifying the following:
@@ -88,8 +87,9 @@ it via a [GitHub](https://github.com/grover/homebridge-callmonitor/issues) issue
 
 ### Configuration
 
-You need to enable the call monitor on the Fritz devices. This can be done by dialing #96*5* on 
-a phone connected directly to the Fritz!Box.
+You need to enable the call monitor on the Fritz devices. This can be done by dialing `#96*5*` on a phone connected directly to the Fritz!Box.
+
+To disable the call monitor dial `#96*4*`.
 
 ## Some asks for friendly gestures
 

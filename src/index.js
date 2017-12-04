@@ -17,13 +17,13 @@ module.exports = (homebridge) => {
   HOMEBRIDGE.Characteristic = homebridge.hap.Characteristic;
   HOMEBRIDGE.UUIDGen = homebridge.hap.uuid;
 
-  homebridge.registerPlatform(platformName, platformPrettyName, FritzPlatform, true);
+  homebridge.registerPlatform(platformName, platformPrettyName, CallMonitorPlatform, true);
 }
 
-const FritzPlatform = class {
+const CallMonitorPlatform = class {
   constructor(log, config, api) {
     this.log = log;
-    this.log('Fritz Platform Plugin Loaded');
+    this.log('CallMonitor Platform Plugin Loaded');
     this.config = config;
     this.api = api;
   }
