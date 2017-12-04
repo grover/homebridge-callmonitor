@@ -166,6 +166,8 @@ class CallMonitorAccessory {
   _connect() {
     this._socket = new Socket();
     this._socket.on('connect', () => {
+      this.log("Connected to " + this.name);
+
       const reader = createStream(this._socket, { encoding: "utf-8" });
       reader.on("data", line => this._onLineReceived(line));
       this._socket.once("end", () => reader.end());
@@ -185,7 +187,7 @@ class CallMonitorAccessory {
       this._setFault(had_error);
 
       // Initiate reconnects
-      console.error("Socket connection to Fritz!Box device was closed. Reconnecting in 5s.");
+      this.log(`Socket connection to "${this.name}"  was closed. Reconnecting in 5s.`);
       setTimeout(this._connect.bind(this), 5000);
     });
 
@@ -193,7 +195,6 @@ class CallMonitorAccessory {
   }
 
   _onLineReceived(line) {
-    console.info(line);
     const data = line.split(';');
 
     //
