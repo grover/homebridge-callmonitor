@@ -1,0 +1,27 @@
+{
+  "name": "homebridge-callmonitor",
+  "version": "0.0.1",
+  "description": "Signals incoming and outgoing calls via HomeKit",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "homebridge",
+    "homebridge-plugin",
+    "fritz",
+    "fritzbox",
+    "callmonitor",
+    "homekit",
+    "home-automation"
+  ],
+  "author": "Michael Fröhlich",
+  "license": "MIT",
+  "dependencies": {
+    "byline": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=0.12.0",
+    "homebridge": ">=0.2.0"
+  }
+}
