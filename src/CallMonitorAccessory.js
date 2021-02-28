@@ -206,22 +206,18 @@ class CallMonitorAccessory {
     // CALL -> CONNECT -> DISCONNECT
     // RING -> CONNECT -> DISCONNECT
     //
-    if (data[1] === 'CALL' || data[1] === 'RING') {
-      if (this._incomingLines.indexOf(data[3])){
+    if (this._incomingLines.indexOf(data[3]) || this._incomingLines === ["*"]) {
+      if (data[1] === 'CALL' || data[1] === 'RING') {
         this._activeConnections.push({
           id: data[2],
           direction: data[1],
-        });  
+        });
       }
-    }
-    else if (data[1] === 'DISCONNECT') {
-      if (this._incomingLines.indexOf(data[3])){
+      else if (data[1] === 'DISCONNECT') {
         this._activeConnections = this._activeConnections.filter(item => item.id !== data[2]);
+      }
+      this._reportCallStatus();
     }
-  }
-  if (this._incomingLines.indexOf(data[3])){
-    this._reportCallStatus();
-  }
   }
 }
 
