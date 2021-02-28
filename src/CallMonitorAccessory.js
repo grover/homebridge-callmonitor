@@ -24,6 +24,7 @@ class CallMonitorAccessory {
 
     this._host = config.address;
     this._port = config.port;
+    this._incomingLines = config.incomingLines;
 
     this._activeConnections = [];
     this._active = false;
@@ -206,14 +207,18 @@ class CallMonitorAccessory {
     // RING -> CONNECT -> DISCONNECT
     //
     if (data[1] === 'CALL' || data[1] === 'RING') {
-      this._activeConnections.push({
-        id: data[2],
-        direction: data[1],
-      });
+      if (this._incomingLines.indexOf(data[3])){
+        this._activeConnections.push({
+          id: data[2],
+          direction: data[1],
+        });  
+      }
     }
     else if (data[1] === 'DISCONNECT') {
-      this._activeConnections = this._activeConnections.filter(item => item.id !== data[2]);
+      if (this._incomingLines.indexOf(data[3])){
+        this._activeConnections = this._activeConnections.filter(item => item.id !== data[2]);
     }
+  }
 
     this._reportCallStatus();
   }

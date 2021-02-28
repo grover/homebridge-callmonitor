@@ -33,7 +33,7 @@ const CallMonitorPlatform = class {
     const { devices } = this.config;
 
     devices.forEach(device => {
-      this.log(`Found device in config: "${devices.name}"`);
+      this.log(`Found device in config: "${device.name}"`);
 
       if (!device.address || !device.name) {
         this.log('Skipping device because it doesn\'t have an address.');
@@ -43,6 +43,7 @@ const CallMonitorPlatform = class {
       device.port = device.port || 1012;
       device.incomingName = device.incomingName || device.name + " - Incoming";
       device.outgoingName = device.outgoingName || device.name + " - Outgoing";
+      device.incomingLines = device.incomingLines || [];
 
       const callMonitor = new CallMonitorAccessory(this.api.hap, this.log, device);
       _accessories.push(callMonitor);
