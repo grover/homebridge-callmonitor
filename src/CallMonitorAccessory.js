@@ -219,8 +219,9 @@ class CallMonitorAccessory {
         this._activeConnections = this._activeConnections.filter(item => item.id !== data[2]);
     }
   }
-
+  if (this._incomingLines.indexOf(data[3])){
     this._reportCallStatus();
+  }
   }
 }
 
