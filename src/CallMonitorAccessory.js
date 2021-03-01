@@ -218,7 +218,7 @@ class CallMonitorAccessory {
       this._activeConnections = this._activeConnections.filter(item => item.id !== data[2]);
     }
     if (this._incomingLines.indexOf(data[4]) >= 0 || this._incomingLines[0] === "*" || this._activeConnections.indexOf(data[2]) >=0) {
-      this.log(data[1] + " on Line " + data[4] + " by caller " + data[3] + " with incomingLines config " + this._incomingLines));
+      this.log(data[1] + " on Line " + data[4] + " by caller " + data[3] + " with incomingLines config " + this._incomingLines);
       this._reportCallStatus();
     }
   }
