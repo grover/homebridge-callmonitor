@@ -206,20 +206,19 @@ class CallMonitorAccessory {
     // CALL -> CONNECT -> DISCONNECT
     // RING -> CONNECT -> DISCONNECT
     //
-    this.log(data[1] + " on Line " + data[4] + " by caller " + data[3]);
-    this.log((this._incomingLines.indexOf(data[4]) >= 0 ? "This call triggers the sensor.":"This call does not trigger the sensor.") + " Config for incomingLines:" + this._incomingLines);
-    if (this._incomingLines.indexOf(data[4]) >= 0 || this._incomingLines[0] === "*") {
-      if (data[1] === 'CALL' || data[1] === 'RING') {
-        this._activeConnections.push({
-          id: data[2],
-          line: data[3],
-          callerId: data[3],
-          direction: data[1]
-        });
-      }
-      else if (data[1] === 'DISCONNECT') {
-        this._activeConnections = this._activeConnections.filter(item => item.id !== data[2]);
-      }
+    if (data[1] === 'CALL' || data[1] === 'RING') {
+      this._activeConnections.push({
+        id: data[2],
+        line: data[3],
+        callerId: data[3],
+        direction: data[1]
+      });
+    }
+    else if (data[1] === 'DISCONNECT') {
+      this._activeConnections = this._activeConnections.filter(item => item.id !== data[2]);
+    }
+    if (this._incomingLines.indexOf(data[4]) >= 0 || this._incomingLines[0] === "*" || this._activeConnections.indexOf(data[2]) >=0) {
+      this.log(data[1] + " on Line " + data[4] + " by caller " + data[3] + " with incomingLines config " + this._incomingLines));
       this._reportCallStatus();
     }
   }
