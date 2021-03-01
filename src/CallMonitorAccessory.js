@@ -207,7 +207,7 @@ class CallMonitorAccessory {
     // RING -> CONNECT -> DISCONNECT
     //
     this.log(data[1] + " on Line " + data[4] + " by caller " + data[3]);
-    this.log(this._incomingLines);
+    this.log((this._incomingLines.indexOf(data[4]) >= 0 ? "This call triggers the sensor.":"This call does not trigger the sensor.") + " Config for incomingLines:" + this._incomingLines);
     if (this._incomingLines.indexOf(data[4]) >= 0 || this._incomingLines[0] === "*") {
       if (data[1] === 'CALL' || data[1] === 'RING') {
         this._activeConnections.push({
