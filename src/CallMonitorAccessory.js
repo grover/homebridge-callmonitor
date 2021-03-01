@@ -206,14 +206,15 @@ class CallMonitorAccessory {
     // CALL -> CONNECT -> DISCONNECT
     // RING -> CONNECT -> DISCONNECT
     //
-    this.log(data[1] + " on Line " + data[3]);
+    this.log(data[1] + " on Line " + data[4] + " by caller " + data[3]);
     this.log(this._incomingLines);
-    if (this._incomingLines.indexOf(data[3]) >= 0 || this._incomingLines[0] === "*") {
+    if (this._incomingLines.indexOf(data[4]) >= 0 || this._incomingLines[0] === "*") {
       if (data[1] === 'CALL' || data[1] === 'RING') {
         this._activeConnections.push({
           id: data[2],
           line: data[3],
-          direction: data[1],
+          callerId: data[3],
+          direction: data[1]
         });
       }
       else if (data[1] === 'DISCONNECT') {
