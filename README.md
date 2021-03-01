@@ -42,6 +42,7 @@ After [Homebridge](https://github.com/nfarina/homebridge) has been installed:
           "port": "1012",
           "outgoingName": "Ausgehender Anruf",
           "incomingName": "Eingehender Anruf"
+          "incomingLines": ["123456","234567"]
         }
       ]
     }
