@@ -43,7 +43,7 @@ const CallMonitorPlatform = class {
       device.port = device.port || 1012;
       device.incomingName = device.incomingName || device.name + " - Incoming";
       device.outgoingName = device.outgoingName || device.name + " - Outgoing";
-      device.incomingLines = device.incomingLines || [];
+      device.incomingLines = device.incomingLines || "*";
 
       const callMonitor = new CallMonitorAccessory(this.api.hap, this.log, device);
       _accessories.push(callMonitor);
