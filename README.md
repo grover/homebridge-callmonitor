@@ -62,7 +62,7 @@ A device is configured by specifying the following:
 | port | The port where the Fritz device reports call statistic data. This default is 1012. |
 | incomingName | The name of the contact sensor service for incoming calls. If not specified this is the name of the device with `- incoming` appended. |
 | outgoingName | The name of the contact sensor service for outgoing calls.  If not specified this is the name of the device with `- outgoing` appended. |
-| incomingLines | The line numbers a device shall react on. Always use array style. Optional |
+| incomingLines | The line numbers a device shall react on. Always use array style or '\*' for no filtering. Optional |
 
 
 ## Accessory Services
