@@ -24,6 +24,7 @@ class CallMonitorAccessory {
 
     this._host = config.address;
     this._port = config.port;
+    this._incomingLines = config.incomingLines;
 
     this._activeConnections = [];
     this._active = false;
@@ -198,7 +199,7 @@ class CallMonitorAccessory {
 
   _onLineReceived(line) {
     const data = line.split(';');
-
+    var activeCall = {};
     //
     // Transitions:
     //
@@ -208,14 +209,20 @@ class CallMonitorAccessory {
     if (data[1] === 'CALL' || data[1] === 'RING') {
       this._activeConnections.push({
         id: data[2],
-        direction: data[1],
+        line: data[4],
+        callerId: data[3],
+        direction: data[1]
       });
+      activeCall = this._activeConnections.filter(item => item.id == data[2])[0];
     }
     else if (data[1] === 'DISCONNECT') {
+      activeCall = this._activeConnections.filter(item => item.id == data[2])[0];
       this._activeConnections = this._activeConnections.filter(item => item.id !== data[2]);
+   }
+    if (this._incomingLines.indexOf(activeCall.line) >= 0 || this._incomingLines[0] === "*") {
+      this.log(data[1] + " on line " + activeCall.line + " by caller " + activeCall.callerId + " with incomingLines config: " + this._incomingLines);
+      this._reportCallStatus();
     }
-
-    this._reportCallStatus();
   }
 }
 
